@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <title>BrokenMind</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!-- Sử dụng Font Inter cho cảm giác hiện đại, sạch sẽ -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Bảng màu mới: Trắng & Mint Green */
+    :root {
+      --bg-page:      #f4f7f6;
+      --bg-panel:     #ffffff;
+      --text-main:    #2d3748;
+      --text-sub:     #718096;
+      
+      --color-primary: #38a169;
+      --color-primary-hover: #2f855a;
+      --color-primary-faint: #f0fff4;
+      
+      --border-color: #e2e8f0;
+      --danger:       #e53e3e;
+      --shadow-sm:    0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md:    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Reset cơ bản */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* ── BRANDING ( Subtle ) ─────────────────────── */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .brand-logo {
+      width: 40px; height: 40px;
+      background-color: var(--color-primary);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 5px rgba(56, 161, 105, 0.2);
+    }
+
+    .brand-logo svg { width: 22px; height: 22px; stroke: #fff; }
+
+    .brand-name {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-main);
+    }
+    .brand-name em { color: var(--color-primary); font-style: normal; }
+
+    /* ── FORM CONTAINER ───────────────── */
+    .vault-container {
+      width: 100%;
+      max-width: 450px;
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .vault-panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      padding: 35px 30px;
+    }
+
+    /* Headings sạch sẽ */
+    .v-heading {
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .v-sub {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      line-height: 1.5;
+      margin-bottom: 25px;
+    }
+
+    /* Phân chia section bằng viền mỏng nhẹ */
+    .v-rule {
+      height: 1px;
+      background: var(--border-color);
+      margin: 20px 0;
+    }
+
+    /* Input Field */
+    .field { margin-bottom: 15px; }
+
+    .field-lbl {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 15px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      outline: none;
+    }
+    input::placeholder { color: #a0aec0; }
+    input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
+    }
+
+    /* Buttons sạch sẽ */
+    button { 
+      cursor: pointer; 
+      font-family: inherit; 
+      border-radius: 8px; 
+      transition: all 0.2s; 
+      display: flex; align-items: center; justify-content: center; gap: 8px; 
+      width: 100%; 
+      font-size: 0.95rem; 
+      font-weight: 600;
+      border: none;
+    }
+
+    .btn-primary {
+      padding: 14px 20px;
+      background-color: var(--color-primary);
+      color: #fff;
+      margin-top: 15px;
+    }
+    .btn-primary:hover { background-color: var(--color-primary-hover); }
+
+    .btn-secondary {
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      margin-top: 10px;
+    }
+    .btn-secondary:hover { border-color: var(--text-sub); background: rgba(0,0,0,0.02); }
+
+    .btn-danger {
+      padding: 12px 20px;
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid rgba(229, 62, 62, 0.3);
+      margin-top: 10px;
+    }
+    .btn-danger:hover {
+      background: #fff5f5;
+      border-color: var(--danger);
+    }
+
+    /* Link ở footer */
+    .v-foot {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+    .v-foot .lk {
+      color: var(--color-primary);
+      cursor: pointer;
+      font-weight: 500;
+      transition: color 0.15s;
+    }
+    .v-foot .lk:hover { color: var(--color-primary-hover); text-decoration: underline; }
+
+    /* Nút admin kín đáo hơn ở dưới */
+    .admin-trig {
+      margin-top: 25px;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      cursor: pointer;
+      background-color: rgba(0,0,0,0.03);
+      transition: all 0.2s;
+    }
+    .admin-trig:hover { color: var(--text-main); background-color: var(--border-color); }
+
+    /* Message line */
+    .msg-line {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      margin-top: 15px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      display: none;
+      text-align: center;
+    }
+    .msg-line:not(:empty) { display: block; }
+
+    #loginMsg, #registerMsg, #editMsg {
+      background-color: var(--color-primary-faint);
+      border: 1px solid rgba(56, 161, 105, 0.2);
+    }
+
+    /* User info card sạch sẽ */
+    #userInfo {
+      margin-top: 15px;
+      background: var(--color-primary-faint);
+      border: 1px solid rgba(56, 161, 105, 0.15);
+      border-radius: 8px;
+      padding: 15px;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: var(--text-main);
+      display: none;
+    }
+    #userInfo div b { color: var(--color-primary); }
+
+    /* Edit box */
+    #editBox {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+    .edit-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 500px) {
+      .vault-panel { padding: 25px 20px; }
+      .v-heading { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════ REGISTER ══════════ -->
+  <div class="vault-container" id="registerBox">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div class="brand-name">Broken<em>Mind</em></div>
+    </div>
+
+    <div class="vault-panel">
+      <h2 class="v-heading">Tạo Vault Danh Tính</h2>
+      <p class="v-sub">Khởi tạo dữ liệu mã hóa an toàn để bảo vệ thông tin cá nhân của bạn.</p>
+
+      <div class="v-rule"></div>
+
+      <div class="field">
+        <label class="field-lbl">Họ tên đầy đủ</label>
+        <input type="text" id="name" placeholder="Ví dụ: Nguyễn Văn A">
+      </div>
+      <div class="field">
+        <label class="field-lbl">Số CCCD / CMND</label>
+        <input type="text" id="cccd" placeholder="Nhập 12 số">
+      </div>
+      <div class="field">
+        <label class="field-lbl">Địa chỉ thường trú</label>
+        <input type="text" id="address" placeholder="Nhập địa chỉ của bạn">
+      </div>
+      <div class="field">
+        <label class="field-lbl">Số tài khoản ngân hàng</label>
+        <input type="text" id="bank" placeholder="Ví dụ: 190xxxxxxxxx">
+      </div>
+      <div class="field">
+        <label class="field-lbl">Mật khẩu bảo mật</label>
+        <input type="password" id="password" placeholder="Mật khẩu mạnh (tối thiểu 8 ký tự)">
+      </div>
+
+      <button class="btn-primary" onclick="register()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        Khởi tạo Vault mới
+      </button>
+      <div id="registerMsg" class="msg-line"></div>
+
+      <div class="v-foot">
+        Bạn đã có vault? <span class="lk" onclick="showLogin()">Đăng nhập</span>
+      </div>
+      
+      <div class="admin-trig" onclick="window.location='admin.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+        Admin Panel
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ LOGIN ══════════ -->
+  <div class="vault-container" id="loginBox" style="display:none; opacity: 0; transform: translateY(10px);">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div class="brand-name">Broken<em>Mind</em></div>
+    </div>
+
+    <div class="vault-panel">
+      <h2 class="v-heading">Mở Khóa Vault</h2>
+      <p class="v-sub">Xác thực danh tính để truy cập dữ liệu được mã hóa.</p>
+
+      <div class="field">
+        <label class="field-lbl">Họ tên</label>
+        <input type="text" id="loginName" placeholder="Nhập tên tài khoản">
+      </div>
+      <div class="field">
+        <label class="field-lbl">Mật khẩu</label>
+        <input type="password" id="loginPassword" placeholder="Nhập mật khẩu">
+      </div>
+
+      <button class="btn-primary" id="loginBtn" onclick="login()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        Xác thực & Mở vault
+      </button>
+      <div id="loginMsg" class="msg-line"></div>
+
+      <!-- Populated by main.js -->
+      <div id="userInfo"></div>
+
+      <!-- Edit box -->
+      <div id="editBox" style="display:none;">
+        <div class="edit-header">Cập nhật thông tin Vault</div>
+        <div class="field">
+          <label class="field-lbl">CCCD / CMND mới</label>
+          <input type="text" id="editCCCD" placeholder="Nhập 12 số mới">
+        </div>
+        <div class="field">
+          <label class="field-lbl">Địa chỉ thường trú mới</label>
+          <input type="text" id="editAddress" placeholder="Nhập địa chỉ mới">
+        </div>
+        <div class="field">
+          <label class="field-lbl">Tài khoản ngân hàng mới</label>
+          <input type="text" id="editBank" placeholder="Nhập số tài khoản mới">
+        </div>
+        <div class="field">
+          <label class="field-lbl">Xác nhận mật khẩu cũ</label>
+          <input type="password" id="editPassword" placeholder="Nhập mật khẩu cũ">
+        </div>
+        <button class="btn-primary" onclick="updateInfo()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg>
+          Cập nhật
+        </button>
+        <button class="btn-secondary" onclick="hideEditBox()">Hủy bỏ</button>
+        <div id="editMsg" class="msg-line"></div>
+      </div>
+
+      <!-- Action buttons (shown after login, managed by main.js) -->
+      <button class="btn-secondary" id="editBtn" style="display:none;" onclick="showEditBox()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg>
+        Chỉnh sửa thông tin
+      </button>
+      <button class="btn-danger" id="deleteBtn" style="display:none;" onclick="deleteAccount()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        Xóa tài khoản
+      </button>
+      <button class="btn-secondary" id="logoutBtn" style="display:none;" onclick="logout()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Đăng xuất
+      </button>
+
+      <div class="v-foot" id="registerLink">
+        Bạn chưa có vault? <span class="lk" onclick="showRegister()">Tạo tài khoản mới</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js"></script>
+  <script>
+    function animPanel(hideId, showId) {
+      const h = document.getElementById(hideId);
+      const s = document.getElementById(showId);
+      
+      h.style.opacity = '0';
+      h.style.transform = 'translateY(-10px)';
+      
+      setTimeout(() => {
+        h.style.display = 'none';
+        s.style.display = 'block';
+        
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            s.style.opacity = '1';
+            s.style.transform = 'translateY(0)';
+          });
+        });
+      }, 300);
+    }
+
+    window.showLogin    = () => animPanel('registerBox', 'loginBox');
+    window.showRegister = () => animPanel('loginBox', 'registerBox');
+
+    const uiObs = new MutationObserver(() => {
+      const ui = document.getElementById('userInfo');
+      if (ui) ui.style.display = ui.innerHTML.trim() ? 'block' : 'none';
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      const ui = document.getElementById('userInfo');
+      if (ui) uiObs.observe(ui, { childList: true, subtree: true, characterData: true });
+    });
+  </script>
+</body>
+</html>
